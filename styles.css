@@ -1,0 +1,247 @@
+/* ===== AquaWatch — protótipo Wear OS ===== */
+:root{
+  --accent:#7abce0;          /* azul claro dos rótulos/crédito */
+  --bg-0:#05080f;
+  --bg-1:#0a1424;
+  --watch:300px;             /* tamanho do relógio */
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+
+html,body{height:100%;}
+body{
+  font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color:#eaf2fb;
+  background:
+    radial-gradient(1100px 700px at 70% 18%, #12243f 0%, rgba(18,36,63,0) 60%),
+    radial-gradient(900px 900px at 12% 110%, #0d1b30 0%, rgba(13,27,48,0) 55%),
+    linear-gradient(160deg, var(--bg-1) 0%, var(--bg-0) 70%);
+  min-height:100%;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* ===== Disclaimer / créditos ===== */
+.credit{
+  position:fixed;
+  top:26px;left:28px;
+  max-width:320px;
+  padding:4px 0 4px 16px;
+  border-left:1px solid rgba(122,188,224,.35);
+  z-index:50;
+}
+.credit__label{
+  display:block;
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:.12em;
+  color:var(--accent);
+  opacity:.65;
+  margin-top:14px;
+}
+.credit__label:first-child{margin-top:0;}
+.credit__body{
+  font-size:14px;
+  line-height:1.5;
+  opacity:.55;
+  margin-top:4px;
+}
+.credit__cred{
+  font-size:13px;
+  line-height:1.45;
+  color:var(--accent);
+  opacity:.6;
+  margin-top:6px;
+}
+
+/* ===== Palco ===== */
+.stage{
+  min-height:100vh;
+  min-height:100dvh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:38px;
+  padding:48px 20px 56px;
+}
+
+/* ===== Relógio ===== */
+.device{ filter:drop-shadow(0 30px 60px rgba(0,0,0,.55)); }
+.device__bezel{
+  width:calc(var(--watch) + 22px);
+  height:calc(var(--watch) + 22px);
+  border-radius:50%;
+  padding:11px;
+  background:
+    radial-gradient(circle at 30% 25%, #2b3340, #14171d 55%, #05060a 100%);
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,.12),
+    inset 0 -6px 14px rgba(0,0,0,.7),
+    0 0 0 1px rgba(255,255,255,.04);
+}
+.viewport{
+  position:relative;
+  width:var(--watch);
+  height:var(--watch);
+  border-radius:50%;
+  overflow:hidden;
+  background:#04060c;
+  touch-action:none;          /* permite capturar swipe */
+  cursor:grab;
+  user-select:none;
+}
+.viewport:active{cursor:grabbing;}
+
+/* ===== Telas ===== */
+.screen{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  visibility:hidden;
+  will-change:transform,opacity;
+}
+.screen img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  pointer-events:none;
+}
+.screen.is-active{ opacity:1; visibility:visible; z-index:2; }
+.screen.is-entering{ z-index:3; }
+
+/* ---- animações de transição ---- */
+@keyframes eLeft {from{transform:translateX(100%)} to{transform:translateX(0)}}
+@keyframes lLeft {from{transform:translateX(0)} to{transform:translateX(-100%)}}
+@keyframes eRight{from{transform:translateX(-100%)}to{transform:translateX(0)}}
+@keyframes lRight{from{transform:translateX(0)} to{transform:translateX(100%)}}
+@keyframes eUp   {from{transform:translateY(100%)} to{transform:translateY(0)}}
+@keyframes lUp   {from{transform:translateY(0)} to{transform:translateY(-100%)}}
+@keyframes eDown {from{transform:translateY(-100%)}to{transform:translateY(0)}}
+@keyframes lDown {from{transform:translateY(0)} to{transform:translateY(100%)}}
+@keyframes eFade {from{opacity:0} to{opacity:1}}
+@keyframes lFade {from{opacity:1} to{opacity:0}}
+@keyframes eFlip {from{opacity:0;transform:scale(.9)} to{opacity:1;transform:scale(1)}}
+@keyframes lFlip {from{opacity:1;transform:scale(1)} to{opacity:0;transform:scale(1.08)}}
+@keyframes eZoom {0%{opacity:0;transform:scale(.35)} 60%{opacity:1;transform:scale(1.06)} 100%{opacity:1;transform:scale(1)}}
+@keyframes shake {10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-8px)}40%,60%{transform:translateX(8px)}}
+
+.fx-eLeft {animation:eLeft .46s var(--ease) both;}
+.fx-lLeft {animation:lLeft .46s var(--ease) both;}
+.fx-eRight{animation:eRight .46s var(--ease) both;}
+.fx-lRight{animation:lRight .46s var(--ease) both;}
+.fx-eUp   {animation:eUp .46s var(--ease) both;}
+.fx-lUp   {animation:lUp .46s var(--ease) both;}
+.fx-eDown {animation:eDown .46s var(--ease) both;}
+.fx-lDown {animation:lDown .46s var(--ease) both;}
+.fx-eFade {animation:eFade .4s ease both;}
+.fx-lFade {animation:lFade .4s ease both;}
+.fx-eFlip {animation:eFlip .4s var(--ease) both;}
+.fx-lFlip {animation:lFlip .4s var(--ease) both;}
+.fx-eZoom {animation:eZoom .55s cubic-bezier(.2,.8,.25,1) both;}
+
+/* feedback de "sem ação" naquele lado */
+@keyframes bounce {0%{transform:translateX(0)}25%{transform:translateX(var(--bx,6px)) translateY(var(--by,0))}100%{transform:translateX(0)}}
+.viewport.bounce .screen.is-active{animation:bounce .34s ease;}
+
+/* tremor no recusado */
+.device.shake{animation:shake .5s both;}
+
+/* ===== Hotspots (botões dentro das telas) ===== */
+.hotspot{
+  position:absolute;
+  z-index:5;
+  background:transparent;
+  border:0;
+  border-radius:40px;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.hotspot:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
+/* ===== Anel girando (conexão) ===== */
+.spinner{
+  position:absolute;
+  inset:0;
+  z-index:6;
+  border-radius:50%;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .3s ease;
+  background:conic-gradient(from 0deg, rgba(122,188,224,0) 0deg, rgba(122,188,224,0) 250deg, rgba(122,188,224,.9) 330deg, #cfeaff 360deg);
+  -webkit-mask:radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 4px));
+          mask:radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 4px));
+}
+.spinner.show{opacity:1;animation:spin 1.1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ===== Brilho NFC ===== */
+.nfc-flash{
+  position:absolute;inset:0;z-index:4;border-radius:50%;
+  background:radial-gradient(circle at 50% 50%, rgba(122,188,224,.55), rgba(122,188,224,0) 60%);
+  opacity:0;pointer-events:none;
+}
+.nfc-flash.ping{animation:ping .6s ease-out;}
+@keyframes ping{0%{opacity:0;transform:scale(.6)}40%{opacity:1}100%{opacity:0;transform:scale(1.05)}}
+
+/* ===== Painel ===== */
+.panel{
+  display:flex;
+  gap:18px;
+  flex-wrap:wrap;
+  justify-content:center;
+  width:100%;
+  max-width:680px;
+}
+.panel__block{
+  flex:1 1 280px;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(122,188,224,.14);
+  border-radius:16px;
+  padding:18px 20px;
+}
+.panel__title{
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:#dbe9f7;
+}
+.panel__title span{color:var(--accent);opacity:.7;font-weight:500;text-transform:none;letter-spacing:0;}
+.panel__hint{font-size:13px;line-height:1.55;opacity:.62;margin:8px 0 14px;}
+.panel__hint b{color:#eaf2fb;opacity:.9;font-weight:600;}
+.panel__btns{display:flex;flex-wrap:wrap;gap:10px;}
+
+.sim,.restart{
+  font-family:inherit;
+  font-size:13px;
+  font-weight:600;
+  color:#eaf2fb;
+  background:rgba(122,188,224,.10);
+  border:1px solid rgba(122,188,224,.30);
+  border-radius:999px;
+  padding:10px 16px;
+  cursor:pointer;
+  transition:transform .12s ease, background .2s ease, border-color .2s ease;
+}
+.sim:hover,.restart:hover{transform:translateY(-1px);background:rgba(122,188,224,.18);}
+.sim:active,.restart:active{transform:translateY(0);}
+.sim--ok{border-color:rgba(45,200,120,.5);}
+.sim--ok:hover{background:rgba(45,200,120,.16);}
+.sim--fail{border-color:rgba(231,90,90,.5);}
+.sim--fail:hover{background:rgba(231,90,90,.16);}
+.sim--limit{border-color:rgba(240,190,70,.5);}
+.sim--limit:hover{background:rgba(240,190,70,.16);}
+.restart{margin-top:2px;background:transparent;}
+
+/* ===== Responsivo ===== */
+@media (max-width:600px){
+  .credit{display:none;}              /* some no mobile p/ não atrapalhar */
+  :root{--watch:min(72vw,290px);}
+  .stage{gap:28px;padding:30px 16px 40px;}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms !important;}
+}
