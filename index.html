@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>AquaWatch · Protótipo clicável (Wear OS Concept)</title>
+  <meta name="description" content="Protótipo clicável do conceito AquaWatch para Wear OS. Produto fictício, criado para fins de estudo." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Crédito / aviso bilíngue (canto superior esquerdo, some no mobile) -->
+  <aside class="credit" aria-label="Aviso e crédito do projeto">
+    <span class="lang">PT</span>
+    <p class="body">Produto fictício. Este conceito não possui qualquer relação com a Aqua. Criado para fins de estudo em Wear OS. Caso necessário, será removido do case study.</p>
+    <p class="cred">AquaWatch Concept · Trícia Linewberg, UX Designer</p>
+
+    <span class="lang">EN</span>
+    <p class="body">Fictional product. This concept has no relation to Aqua. Created for study purposes in Wear OS. If necessary, it will be removed from the case study.</p>
+    <p class="cred">AquaWatch Concept · Trícia Linewberg, UX Designer</p>
+  </aside>
+
+  <main class="stage-wrap">
+    <!-- O relógio -->
+    <div class="watch" id="watch" role="application" aria-label="AquaWatch — protótipo">
+      <div class="bezel"></div>
+      <div class="stage" id="stage" tabindex="0" aria-label="Tela do relógio. Arraste para navegar, toque para detalhes."></div>
+      <div class="lugs lugs-top"></div>
+      <div class="lugs lugs-bottom"></div>
+      <button class="crown" id="crown" aria-label="Reiniciar protótipo" title="Reiniciar"></button>
+    </div>
+
+    <!-- Painel de simulação (máquina de pagamento NFC) -->
+    <section class="panel" aria-label="Simulador de pagamento">
+      <h2 class="panel-title">Máquina de pagamento (NFC)</h2>
+      <p class="panel-hint">Encoste o relógio na máquina para simular um pagamento. Disponível na tela inicial (Saldo).</p>
+      <div class="panel-buttons">
+        <button class="sim sim-ok"   data-sim="success"    disabled>✓ Pagamento aprovado</button>
+        <button class="sim sim-fail" data-sim="reject"     disabled>✕ Pagamento recusado</button>
+        <button class="sim sim-warn" data-sim="aboveLimit" disabled>⚠ Acima do limite</button>
+      </div>
+
+      <div class="hints">
+        <h3>Como navegar</h3>
+        <ul>
+          <li><b>Arraste</b> (ou setas do teclado) para deslizar entre telas</li>
+          <li><b>Toque</b> (ou Enter) na tela inicial para ver o saldo completo</li>
+          <li>Saldo → ←/→ Histórico · Limite · Logout · ↑ no Histórico abre os detalhes</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
