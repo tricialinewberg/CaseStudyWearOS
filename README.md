@@ -15,7 +15,7 @@ Feito em HTML, CSS e JavaScript puro, usando exatamente as telas desenhadas no F
 ## Simulações de pagamento (botões abaixo do relógio)
 1. **Aprovado:** 6 → 6.1 (zoom) → 6.2 (novo saldo)
 2. **Recusado:** 7 (tremor) → 7.1 → volta para a tela inicial
-3. **Acima do limite:** 9 → *Pay anyway* (aprova) ou *Cancel* (volta)
+3. **Acima do limite:** 9 → tocar na face confirma a digital (aprova) ou *Cancel* (volta)
 
 ## Controles
 - **Arraste** o relógio (← → ↑ ↓) ou use as **setas do teclado**
